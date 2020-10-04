@@ -2,54 +2,58 @@
 
 using namespace std;
 
-void heapify(vector<pair<int, int>> &vec, int parent, int size) {
+
+void heapify(int arr[], int parent, int size) {
     int left = 2 * parent + 1;
     int right = 2 * parent + 2;
     int largest = parent;
-    if (left < size && (vec[left].first > vec[largest].first ||
-                        (vec[left].first == vec[largest].first && vec[left].second > vec[largest].second)))
+    if (left < size && arr[left] > arr[largest])
         largest = left;
-    if (right < size && (vec[right].first > vec[largest].first ||
-                         (vec[right].first == vec[largest].first && vec[right].second > vec[largest].second)))
+    if (right < size && arr[right] > arr[largest])
         largest = right;
     if (largest != parent) {
-        int v1 = vec[parent].first;
-        int v2 = vec[parent].second;
-        vec[parent].first = vec[largest].first;
-        vec[parent].second = vec[largest].second;
-        vec[largest].first = v1;
-        vec[largest].second = v2;
-        heapify(vec, largest, size);
+        int temp = arr[parent];
+        arr[parent] = arr[largest];
+        arr[largest] = temp;
+        heapify(arr, largest, size);
     }
 }
 
-void heapSort(vector<pair<int, int>> &vec, int size) {
+void heapSort(int arr[], int size) {
     for (int i = (size / 2) - 1; i >= 0; i--)
-        heapify(vec, i, size);
+        heapify(arr, i, size);
 
     for (int i = size - 1; i > 0; i--) {
-        int max1 = vec[0].first;
-        int max2 = vec[0].second;
-        vec[0].first = vec[i].first;
-        vec[0].second = vec[i].second;
-        vec[i].first = max1;
-        vec[i].second = max2;
-        heapify(vec, 0, i);
+        int max = arr[0];
+        arr[0] = arr[i];
+        arr[i] = max;
+        heapify(arr, 0, i);
     }
 }
+
+void printNthPair(int *arr, int n, int k, map<int, int> count, map<int, int> firstIndex) {
+    int i = firstIndex[arr[k / n]];
+    int j = (k - n * i) / count[arr[i]];
+
+    printf("%d %d\n", arr[i], arr[j]);
+}
+
 
 int main() {
     int n, k;
     scanf("%d%d", &n, &k);
     int arr[n];
+    map<int, int> count, firstIndex;
+
     for (int i = 0; i < n; ++i)
         scanf("%d", &arr[i]);
 
-    vector<pair<int, int>> vec;
-    for (int i = 0; i < n; ++i)
-        for (int j = 0; j < n; ++j)
-            vec.push_back(make_pair(arr[i], arr[j]));
-    heapSort(vec, n * n);
+    heapSort(arr, n);
 
-    printf("%d %d\n", vec[k - 1].first, vec[k - 1].second);
+    for (int i = 0; i < n; ++i) {
+        count[arr[i]] += 1;
+        if (count[arr[i]] == 1) firstIndex[arr[i]] = i;
+    }
+
+    printNthPair(arr, n, k - 1, count, firstIndex);
 }
