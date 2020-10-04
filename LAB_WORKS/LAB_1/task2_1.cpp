@@ -3,15 +3,14 @@
 using namespace std;
 
 void sort(int *arr, int n) {
-    for (int i = 1; i < n; i++) {
-        int value = arr[i];
-        int hole = i;
-        while (hole > 0 && value < arr[hole - 1]) {
-            arr[hole] = arr[hole - 1];
-            hole--;
-        }
-        arr[hole] = value;
+    int i = n - 1;
+    int value = arr[i];
+    int hole = i;
+    while (hole > 0 && value < arr[hole - 1]) {
+        arr[hole] = arr[hole - 1];
+        hole--;
     }
+    arr[hole] = value;
 }
 
 void printMedian(int *arr, int size) {
